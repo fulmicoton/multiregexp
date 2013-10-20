@@ -2,13 +2,27 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.fulmicoton</groupId>
+  <groupId>com.fulmicoton.multiregexp</groupId>
   <artifactId>multiregexp</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <packaging>jar</packaging>
 
   <name>MultiRegexp</name>
   <url>https://github.com/poulejapon/multiregexp</url>
+
+
+  <licenses>
+    <license>
+      <name>The MIT License (MIT)</name>
+      <url>https://github.com/poulejapon/multiregexp/blob/master/LICENSE</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  
+  <scm>
+    <url>https://github.com/poulejapon/multiregexp/</url>
+  </scm>
 
   <dependencies>
     <dependency>
