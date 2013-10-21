@@ -30,12 +30,69 @@
       <artifactId>automaton</artifactId>
       <version>1.11-8</version>
     </dependency>
+    
+    <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>org.json</artifactId>
+        <version>chargebee-1.0</version>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.8.2</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
+
+
+  <build>
+<plugins>
+   <plugin>
+   <groupId>org.apache.maven.plugins</groupId>
+   <artifactId>maven-antrun-plugin</artifactId>
+   <version>1.1</version>
+   <executions>
+      <execution>
+         <id>id.pre-clean</id>
+         <phase>pre-clean</phase>
+         <goals>
+            <goal>run</goal>
+         </goals>
+         <configuration>
+            <tasks>
+               <echo>pre-clean phase</echo>
+            </tasks>
+         </configuration>
+      </execution>
+      <execution>
+         <id>id.clean</id>
+         <phase>clean</phase>
+         <goals>
+          <goal>run</goal>
+         </goals>
+         <configuration>
+            <tasks>
+               <echo>clean phase</echo>
+            </tasks>
+         </configuration>
+      </execution>
+      <execution>
+         <id>id.post-clean</id>
+         <phase>post-clean</phase>
+         <goals>
+            <goal>run</goal>
+         </goals>
+         <configuration>
+            <tasks>
+               <echo>post-clean phase</echo>
+            </tasks>
+         </configuration>
+      </execution>
+   </executions>
+   </plugin>
+</plugins>
+</build>
+
+
 </project>

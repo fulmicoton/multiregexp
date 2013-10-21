@@ -10,18 +10,24 @@ import java.util.*;
 public class MultiPattern {
 
     private final static int[] NO_MATCH = new int[0];
-    public final int size;
     private final int[][] accept;
     private final int[] transitions;
     private final char[] points;
     private final int[] alphabet;
 
     private MultiPattern(int[][] accept, int[] transitions, char[] points) {
-        this.size = accept.length;
         this.accept = accept;
         this.transitions = transitions;
         this.points = points;
         this.alphabet = alphabet(points);
+    }
+
+    public int alphabetSize() {
+        return this.points.length;
+    }
+
+    public int nbStates() {
+        return this.accept.length;
     }
 
     static int[] alphabet(char[] points) {
@@ -46,6 +52,11 @@ public class MultiPattern {
     }
 
     public static MultiPattern compile(String... patterns) {
+        List<String> patternList = Arrays.asList(patterns);
+        return MultiPattern.compile(patternList);
+    }
+
+    public static MultiPattern compile(Iterable<String> patterns) {
         List<Automaton> automata = new ArrayList<Automaton>();
         for (String pattern: patterns) {
             Automaton automaton = new RegExp(pattern).toAutomaton();
