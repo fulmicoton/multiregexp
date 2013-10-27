@@ -10,7 +10,6 @@
   <name>MultiRegexp</name>
   <url>https://github.com/poulejapon/multiregexp</url>
 
-
   <licenses>
     <license>
       <name>The MIT License (MIT)</name>
@@ -47,51 +46,13 @@
 
 
   <build>
-<plugins>
+  <plugins>
    <plugin>
-   <groupId>org.apache.maven.plugins</groupId>
-   <artifactId>maven-antrun-plugin</artifactId>
-   <version>1.1</version>
-   <executions>
-      <execution>
-         <id>id.pre-clean</id>
-         <phase>pre-clean</phase>
-         <goals>
-            <goal>run</goal>
-         </goals>
-         <configuration>
-            <tasks>
-               <echo>pre-clean phase</echo>
-            </tasks>
-         </configuration>
-      </execution>
-      <execution>
-         <id>id.clean</id>
-         <phase>clean</phase>
-         <goals>
-          <goal>run</goal>
-         </goals>
-         <configuration>
-            <tasks>
-               <echo>clean phase</echo>
-            </tasks>
-         </configuration>
-      </execution>
-      <execution>
-         <id>id.post-clean</id>
-         <phase>post-clean</phase>
-         <goals>
-            <goal>run</goal>
-         </goals>
-         <configuration>
-            <tasks>
-               <echo>post-clean phase</echo>
-            </tasks>
-         </configuration>
-      </execution>
-   </executions>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.16</version>
    </plugin>
-</plugins>
+  </plugins>
 </build>
 
 
