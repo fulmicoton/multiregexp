@@ -1,6 +1,8 @@
 multiregexp
 ===========
 
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/4f8a29a2d286645eb180ed7b667349dc "githalytics.com")](http://githalytics.com/poulejapon/multiregexp)
+
 Performant Java library to check for multiple regexp. 
 *This library relies on [dk.brics.automaton](http://www.brics.dk/automaton/) to do all the difficult stuff.*
 
