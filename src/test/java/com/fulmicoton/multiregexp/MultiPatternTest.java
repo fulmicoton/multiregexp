@@ -21,18 +21,17 @@ public class MultiPatternTest {
     @Test
     public void testSearch() {
         MultiPatternSearcher.Cursor cursor = multiPatternSearcher.search("ab abc vvv");
-        int[] matched = cursor.next();
-        Assert.assertArrayEquals(matched, new int[]{0});
-        matched = cursor.next();
-        Assert.assertArrayEquals(matched, new int[]{0});
-        matched = cursor.next();
-        Assert.assertArrayEquals(matched, new int[]{3, 4});
-        matched = cursor.next();
-        Assert.assertArrayEquals(matched, new int[]{3, 4});
-        matched = cursor.next();
-        Assert.assertArrayEquals(matched, new int[]{3, 4});
-        matched = cursor.next();
-        Assert.assertNull(matched);
+        Assert.assertArrayEquals(cursor.matches(), new int[]{0});
+        Assert.assertTrue(cursor.next());
+        Assert.assertArrayEquals(cursor.matches(), new int[]{0});
+        Assert.assertTrue(cursor.next());
+        Assert.assertArrayEquals(cursor.matches(), new int[]{3, 4});
+        Assert.assertTrue(cursor.next());
+        Assert.assertArrayEquals(cursor.matches(), new int[]{3, 4});
+        Assert.assertTrue(cursor.next());
+        Assert.assertArrayEquals(cursor.matches(), new int[]{3, 4});
+        Assert.assertFalse(cursor.next());
+        Assert.assertNull(cursor.matches());
     }
 
     public static void helper(MultiPatternMatcher matcher, String str, int... vals) {

@@ -12,19 +12,33 @@ public class MultiPatternSearcher {
         return search(s, 0);
     }
 
-    public Cursor search(CharSequence s, int offset) {
-        return new Cursor(s, offset);
+    public Cursor search(CharSequence s, int position) {
+        return new Cursor(s, position);
     }
 
     public class Cursor {
         private final CharSequence seq;
-        private int cur = 0;
+        private int position = 0;
         private final int seqLength;
+        private int[] matches;
 
-        Cursor(CharSequence seq, int cur) {
+        Cursor(CharSequence seq, int position) {
             this.seq = seq;
-            this.cur = cur;
+            this.position = position;
             this.seqLength = seq.length();
+            this.next();
+        }
+
+        public int[] matches() {
+            return this.matches;
+        }
+
+        public boolean found() {
+            return this.matches != null;
+        }
+
+        public int position() {
+            return this.position;
         }
 
         /* Advances the cursor and returns as soon as a pattern is matched.
@@ -34,16 +48,18 @@ public class MultiPatternSearcher {
          * The cursor start is lost (at the moment).
          * Returns a sorted array containing the matched pattern ids.
          */
-        public int[] next() {
+        public boolean next() {
             int curState = 0;
-            while (cur < seqLength) {
-                curState = automaton.step(curState, this.seq.charAt(cur));
-                cur++;
+            while (position < seqLength) {
+                curState = automaton.step(curState, this.seq.charAt(position));
+                position++;
                 if (automaton.atLeastOneAccept[curState]) {
-                    return automaton.accept[curState];
+                    this.matches = automaton.accept[curState];
+                    return true;
                 }
             }
-            return null;
+            this.matches = null;
+            return false;
         }
 
 
