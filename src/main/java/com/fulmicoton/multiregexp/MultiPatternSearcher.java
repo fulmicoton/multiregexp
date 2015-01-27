@@ -1,40 +1,51 @@
 package com.fulmicoton.multiregexp;
 
 public class MultiPatternSearcher {
-    private final MultiPattern multiPattern;
-    private final CharSequence seq;
-    private int cur = 0;
-    private int curState = 0;
-    private int matchedPattern = 0;
-    private final int seqLength;
 
-    MultiPatternSearcher(MultiPattern multiPattern, CharSequence seq) {
-        this.multiPattern = multiPattern;
-        this.seq = seq;
-        this.seqLength = seq.length();
+    private final MultiPatternAutomaton automaton;
+
+    MultiPatternSearcher(MultiPatternAutomaton automaton) {
+        this.automaton = automaton;
     }
 
-    public int[] find() {
-        this.curState = 0;
-        for (; cur < seqLength; ++cur) {
-            this.curState = this.multiPattern.step(this.curState, this.seq.charAt(cur));
-            if (this.multiPattern.isAtLeastOneAccept(this.curState)) {
-                return this.multiPattern.acceptedPatterns(this.curState);
-            }
+    public Cursor search(CharSequence s) {
+        return search(s, 0);
+    }
+
+    public Cursor search(CharSequence s, int offset) {
+        return new Cursor(s, offset);
+    }
+
+    public class Cursor {
+        private final CharSequence seq;
+        private int cur = 0;
+        private final int seqLength;
+
+        Cursor(CharSequence seq, int cur) {
+            this.seq = seq;
+            this.cur = cur;
+            this.seqLength = seq.length();
         }
-        return null;
+
+        /* Advances the cursor and returns as soon as a pattern is matched.
+         *
+         * It is not greedy.
+         *  The cursor ends at the end of the match.
+         * The cursor start is lost (at the moment).
+         * Returns a sorted array containing the matched pattern ids.
+         */
+        public int[] next() {
+            int curState = 0;
+            while (cur < seqLength) {
+                curState = automaton.step(curState, this.seq.charAt(cur));
+                cur++;
+                if (automaton.atLeastOneAccept[curState]) {
+                    return automaton.accept[curState];
+                }
+            }
+            return null;
+        }
+
+
     }
-
 }
-
-
-/**
- *         int p = 0;
- int l = s.length();
- for (int i = 0; i < l; i++) {
- p = step(p, s.charAt(i));
- if (p == -1)
- return NO_MATCH;
- }
- return this.accept[p];
- */

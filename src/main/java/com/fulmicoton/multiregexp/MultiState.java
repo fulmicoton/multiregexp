@@ -1,11 +1,10 @@
 package com.fulmicoton.multiregexp;
 
-
-import dk.brics.automaton.State;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import dk.brics.automaton.State;
 
 class MultiState {
 

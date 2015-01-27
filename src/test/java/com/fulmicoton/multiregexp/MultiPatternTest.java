@@ -5,8 +5,7 @@ import org.junit.Test;
 
 public class MultiPatternTest {
 
-
-    public static MultiPattern multiPattern = MultiPattern.compile(
+    public static MultiPattern multiPattern = MultiPattern.of(
             "ab+",     // 0
             "abc+",    // 1
             "ab?c",    // 2
@@ -15,32 +14,41 @@ public class MultiPatternTest {
             "(def)+"   // 5
     );
 
+    public static final MultiPatternSearcher multiPatternSearcher = multiPattern.searcher();
 
-    public static MultiPattern multiPatternSearcher = MultiPattern.compileForSearch("abc", "de ", "de", "g");
+    public static final MultiPatternMatcher multiPatternMatcher = multiPattern.matcher();
 
     @Test
     public void testSearch() {
-        MultiPatternSearcher searcher = multiPatternSearcher.search("   abc");
-        int[] matching = searcher.find();
-        System.out.println(matching);
+        MultiPatternSearcher.Cursor cursor = multiPatternSearcher.search("ab abc vvv");
+        int[] matched = cursor.next();
+        Assert.assertArrayEquals(matched, new int[]{0});
+        matched = cursor.next();
+        Assert.assertArrayEquals(matched, new int[]{0});
+        matched = cursor.next();
+        Assert.assertArrayEquals(matched, new int[]{3, 4});
+        matched = cursor.next();
+        Assert.assertArrayEquals(matched, new int[]{3, 4});
+        matched = cursor.next();
+        Assert.assertArrayEquals(matched, new int[]{3, 4});
+        matched = cursor.next();
+        Assert.assertNull(matched);
     }
 
-
-
-    public static void helper(MultiPattern multipattern, String str, int... vals) {
-        Assert.assertArrayEquals(vals, multiPattern.match(str));
+    public static void helper(MultiPatternMatcher matcher, String str, int... vals) {
+        Assert.assertArrayEquals(vals, matcher.match(str));
     }
 
     @Test
     public void testString() {
-        helper(multiPattern, "ab", 0);
-        helper(multiPattern, "abc", 1, 2);
-        helper(multiPattern, "ac", 2);
-        helper(multiPattern, "");
-        helper(multiPattern, "v", 3, 4);
-        helper(multiPattern, "defdef", 5);
-        helper(multiPattern, "defde");
-        helper(multiPattern, "abbbbb", 0);
+        helper(multiPatternMatcher, "ab", 0);
+        helper(multiPatternMatcher, "abc", 1, 2);
+        helper(multiPatternMatcher, "ac", 2);
+        helper(multiPatternMatcher, "");
+        helper(multiPatternMatcher, "v", 3, 4);
+        helper(multiPatternMatcher, "defdef", 5);
+        helper(multiPatternMatcher, "defde");
+        helper(multiPatternMatcher, "abbbbb", 0);
     }
 
 }
