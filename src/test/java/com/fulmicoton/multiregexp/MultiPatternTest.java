@@ -16,6 +16,17 @@ public class MultiPatternTest {
     );
 
 
+    public static MultiPattern multiPatternSearcher = MultiPattern.compileForSearch("abc", "de ", "de", "g");
+
+    @Test
+    public void testSearch() {
+        MultiPatternSearcher searcher = multiPatternSearcher.search("   abc");
+        int[] matching = searcher.find();
+        System.out.println(matching);
+    }
+
+
+
     public static void helper(MultiPattern multipattern, String str, int... vals) {
         Assert.assertArrayEquals(vals, multiPattern.match(str));
     }

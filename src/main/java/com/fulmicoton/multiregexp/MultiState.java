@@ -28,9 +28,7 @@ class MultiState {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         MultiState that = (MultiState) o;
-
         return Arrays.equals(states, that.states);
     }
 
@@ -53,8 +51,9 @@ class MultiState {
         return new MultiState(nextStates);
     }
 
+
     public int[] toAcceptValues() {
-        List<Integer> acceptValues = new ArrayList<Integer>();
+        List<Integer> acceptValues = new ArrayList<>();
         for (int stateId=0; stateId<this.states.length; stateId++) {
             State curState = this.states[stateId];
             if ((curState != null) && (curState.isAccept())) {
