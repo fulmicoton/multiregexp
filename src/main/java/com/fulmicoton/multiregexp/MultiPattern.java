@@ -23,7 +23,7 @@ public class MultiPattern {
         return new MultiPattern(Arrays.asList(patterns));
     }
 
-    private MultiPatternAutomaton makeWithPrefix(String prefix) {
+    MultiPatternAutomaton makeWithPrefix(String prefix) {
         final List<Automaton> automata = new ArrayList<>();
         for (String ptn: this.patterns) {
             final String prefixedPattern = prefix + ptn;
