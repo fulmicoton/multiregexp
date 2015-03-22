@@ -8,17 +8,24 @@ public class Lexer<T extends Enum> {
 
     private final ArrayList<T> types = new ArrayList<T>() ;
     private final ArrayList<String> patterns = new ArrayList<String>();
+    private transient MultiPatternAutomaton automaton = null;
 
     public Lexer addRule(final T tokenType, final String pattern) {
         this.types.add(tokenType);
         this.patterns.add(pattern);
+        this.automaton = null;
         return this;
     }
 
+    public MultiPatternAutomaton getAutomaton() {
+        if (this.automaton == null) {
+            this.automaton = MultiPattern.of(patterns).makeWithPrefix("");
+        }
+        return this.automaton;
+    }
+
     public Scanner<T> scannerFor(CharSequence seq) {
-        final MultiPattern multiPattern = MultiPattern.of(patterns);
-        final MultiPatternAutomaton automaton = multiPattern.makeWithPrefix("");
-        return new Scanner<T>(automaton, seq, this.types);
+        return new Scanner<T>(this.getAutomaton(), seq, this.types);
     }
 
     public Iterable<Token<T>> scan(final CharSequence seq) {
