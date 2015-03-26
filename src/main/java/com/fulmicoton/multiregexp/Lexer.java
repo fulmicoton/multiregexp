@@ -10,7 +10,7 @@ public class Lexer<T extends Enum> {
     private final ArrayList<String> patterns = new ArrayList<String>();
     private transient MultiPatternAutomaton automaton = null;
 
-    public Lexer addRule(final T tokenType, final String pattern) {
+    public Lexer<T> addRule(final T tokenType, final String pattern) {
         this.types.add(tokenType);
         this.patterns.add(pattern);
         this.automaton = null;
