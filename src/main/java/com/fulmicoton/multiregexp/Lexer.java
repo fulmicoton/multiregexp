@@ -19,7 +19,7 @@ public class Lexer<T extends Enum> {
 
     public MultiPatternAutomaton getAutomaton() {
         if (this.automaton == null) {
-            this.automaton = MultiPattern.of(patterns).makeWithPrefix("");
+            this.automaton = MultiPattern.of(patterns).makeAutomatonWithPrefix("");
         }
         return this.automaton;
     }

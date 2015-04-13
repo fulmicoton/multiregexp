@@ -1,6 +1,5 @@
 package com.fulmicoton.multiregexp;
 
-
 import java.util.ArrayList;
 
 public class Scanner<T extends Enum> {
@@ -17,12 +16,18 @@ public class Scanner<T extends Enum> {
         return this.str.subSequence(this.start, this.end);
     }
 
-    public Scanner(MultiPatternAutomaton automaton, CharSequence str, ArrayList<T> tokenTypes) {
+    public Scanner(final MultiPatternAutomaton automaton,
+                   final CharSequence str,
+                   final ArrayList<T> tokenTypes) {
         this.str = str;
         this.automaton = automaton;
         this.tokenTypes = tokenTypes;
     }
 
+
+    /**
+     * Same as next(), but throws unchecked Exception.
+     */
     boolean nextUnchecked() {
         try {
             return this.next();
@@ -32,7 +37,9 @@ public class Scanner<T extends Enum> {
     }
 
     boolean next() throws ScanException {
+        // we start at the end of the last emitted token
         this.start = this.end;
+        // we reached the end of the string.
         if (start == this.str.length()) {
             return false;
         }
@@ -50,12 +57,22 @@ public class Scanner<T extends Enum> {
                 if (accept.length > 0) {
                     final int minAccept = accept[0];
                     if (minAccept <= highestPriorityMatch) {
+                        // HighPriority = low value.
+                        // If we find a match with a higher priority
+                        // we prefer than one,
+                        // If it is the same pattern which is
+                        // match we take that too for the sake of greediness.
                         highestPriorityMatch = minAccept;
                         lastLetter = i;
                     }
                 }
+                // when a match is found, we keep matching
+                // as a longer prefix might match a pattern
+                // with a higher priority.
             }
         }
+        // No tokens have been found. Raised an expression
+        // with a bit of context, and the offset in the string.
         if (highestPriorityMatch == Integer.MAX_VALUE) {
             final int contextStart = Math.max(0, this.start - 10);
             final int contextEnd = Math.min(this.start + 10, this.str.length());

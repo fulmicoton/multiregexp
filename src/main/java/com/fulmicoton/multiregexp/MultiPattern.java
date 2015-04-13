@@ -23,7 +23,7 @@ public class MultiPattern {
         return new MultiPattern(Arrays.asList(patterns));
     }
 
-    MultiPatternAutomaton makeWithPrefix(String prefix) {
+    public MultiPatternAutomaton makeAutomatonWithPrefix(String prefix) {
         final List<Automaton> automata = new ArrayList<>();
         for (String ptn: this.patterns) {
             final String prefixedPattern = prefix + ptn;
@@ -44,7 +44,7 @@ public class MultiPattern {
      * @return A searcher object
      */
     public MultiPatternSearcher searcher() {
-        final MultiPatternAutomaton searcherAutomaton = makeWithPrefix(".*");
+        final MultiPatternAutomaton searcherAutomaton = makeAutomatonWithPrefix(".*");
         return new MultiPatternSearcher(searcherAutomaton);
     }
 
@@ -61,7 +61,7 @@ public class MultiPattern {
      * @return A searcher object
      */
     public MultiPatternMatcher matcher() {
-        final MultiPatternAutomaton matcherAutomaton = makeWithPrefix("");
+        final MultiPatternAutomaton matcherAutomaton = makeAutomatonWithPrefix("");
         return new MultiPatternMatcher(matcherAutomaton);
     }
 }

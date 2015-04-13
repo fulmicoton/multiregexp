@@ -11,26 +11,26 @@ import dk.brics.automaton.Automaton;
 import dk.brics.automaton.DkBricsAutomatonHelper;
 import dk.brics.automaton.State;
 
-class MultiPatternAutomaton {
+public class MultiPatternAutomaton {
 
-    final int[][] accept;
+    public final int[][] accept;
     final boolean[] atLeastOneAccept;
+    private final int stride;
     private final int[] transitions;
-    private final char[] points;
     private final int[] alphabet;
 
     private MultiPatternAutomaton(final int[][] accept, final int[] transitions, final char[] points) {
         this.accept = accept;
         this.transitions = transitions;
-        this.points = points;
         this.alphabet = alphabet(points);
+        this.stride = points.length;
         this.atLeastOneAccept = new boolean[accept.length];
         for (int i=0; i<accept.length; i++) {
             this.atLeastOneAccept[i] = (this.accept[i].length > 0);
         }
     }
 
-    static int[] alphabet(final char[] points) {
+    private static int[] alphabet(final char[] points) {
         final int[] alphabet = new int[Character.MAX_VALUE - Character.MIN_VALUE + 1];
         int i = 0;
         for (int j = 0; j <= (Character.MAX_VALUE - Character.MIN_VALUE); j++) {
@@ -42,7 +42,6 @@ class MultiPatternAutomaton {
     }
 
     static MultiState initialState(List<Automaton> automata) {
-
         final State[] initialStates = new State[automata.size()];
         int c = 0;
         for (final Automaton automaton: automata) {
@@ -115,8 +114,8 @@ class MultiPatternAutomaton {
         return new MultiPatternAutomaton(acceptValues, transitions, points);
     }
 
-    int step(final int state, final char c) {
-        return transitions[((state * points.length) + alphabet[c - Character.MIN_VALUE])];
+    public int step(final int state, final char c) {
+        return transitions[((state * this.stride) + alphabet[c - Character.MIN_VALUE])];
     }
 
 
