@@ -2,9 +2,9 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>fulmicoton</groupId>
+  <groupId>com.fulmicoton</groupId>
   <artifactId>multiregexp</artifactId>
-  <version>0.2</version>
+  <version>0.3</version>
   <packaging>jar</packaging>
 
   <name>MultiRegexp</name>
@@ -18,7 +18,7 @@
     </license>
   </licenses>
 
-  
+
   <scm>
     <url>https://github.com/fulmicoton/multiregexp/</url>
   </scm>
@@ -29,19 +29,28 @@
       <artifactId>automaton</artifactId>
       <version>1.11-8</version>
     </dependency>
-    
+
     <dependency>
         <groupId>org.json</groupId>
         <artifactId>org.json</artifactId>
         <version>chargebee-1.0</version>
     </dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.8.2</version>
-      <scope>test</scope>
-    </dependency>
+
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.8.2</version>
+          <scope>test</scope>
+      </dependency>
+
+
+      <dependency>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>asm-all</artifactId>
+          <version>5.0.3</version>
+      </dependency>
+
   </dependencies>
 
 
