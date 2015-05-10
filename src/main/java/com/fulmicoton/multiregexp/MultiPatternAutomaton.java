@@ -18,8 +18,12 @@ public class MultiPatternAutomaton {
     private final int stride;
     private final int[] transitions;
     private final int[] alphabet;
+    private final int nbPatterns;
 
-    private MultiPatternAutomaton(final int[][] accept, final int[] transitions, final char[] points) {
+    private MultiPatternAutomaton(final int[][] accept,
+                                  final int[] transitions,
+                                  final char[] points,
+                                  final int nbPatterns) {
         this.accept = accept;
         this.transitions = transitions;
         this.alphabet = alphabet(points);
@@ -28,6 +32,7 @@ public class MultiPatternAutomaton {
         for (int i=0; i<accept.length; i++) {
             this.atLeastOneAccept[i] = (this.accept[i].length > 0);
         }
+        this.nbPatterns = nbPatterns;
     }
 
     private static int[] alphabet(final char[] points) {
@@ -111,12 +116,15 @@ public class MultiPatternAutomaton {
             acceptValues[stateId] = multiState.toAcceptValues();
         }
 
-        return new MultiPatternAutomaton(acceptValues, transitions, points);
+        return new MultiPatternAutomaton(acceptValues, transitions, points, automata.size());
     }
 
     public int step(final int state, final char c) {
         return transitions[((state * this.stride) + alphabet[c - Character.MIN_VALUE])];
     }
 
+    public int getNbPatterns() {
+        return this.nbPatterns;
+    }
 
 }

@@ -3,10 +3,29 @@ package com.fulmicoton.multiregexp;
 public class MultiPatternSearcher {
 
     private final MultiPatternAutomaton automaton;
+    private final boolean[][] inverseAccept;
 
-    MultiPatternSearcher(MultiPatternAutomaton automaton) {
+    MultiPatternSearcher(final MultiPatternAutomaton automaton) {
         this.automaton = automaton;
+        final int nbPatterns = this.automaton.getNbPatterns();
+        this.inverseAccept = inverseAccept(automaton.accept, nbPatterns);
     }
+
+    private static boolean[][] inverseAccept(int[][] accept, final int nbPatterns) {
+        final int nbStates = accept.length;
+        final boolean[][] inverseAccept = new boolean[nbPatterns][];
+        for (int patternId=0; patternId<nbPatterns; patternId++) {
+            inverseAccept[patternId] = new boolean[nbStates];
+        }
+        for (int stateId=0; stateId<nbStates; stateId++) {
+            final int[] acceptedPatterns = accept[stateId];
+            for (int patternId: acceptedPatterns) {
+                inverseAccept[patternId][stateId] = true;
+            }
+        }
+        return inverseAccept;
+    }
+
 
     public Cursor search(CharSequence s) {
         return search(s, 0);
@@ -18,48 +37,70 @@ public class MultiPatternSearcher {
 
     public class Cursor {
         private final CharSequence seq;
-        private int position = 0;
-        private final int seqLength;
-        private int[] matches;
+        private int position = 0; //< one char after the last char containing in the match.
+        private int matchingPattern = -1;
 
         Cursor(CharSequence seq, int position) {
             this.seq = seq;
             this.position = position;
-            this.seqLength = seq.length();
-            this.next();
         }
 
-        public int[] matches() {
-            return this.matches;
+        public int match() {
+            return this.matchingPattern;
         }
 
         public boolean found() {
-            return this.matches != null;
+            return this.matchingPattern >= 0;
         }
 
-        public int position() {
+        public int end() {
             return this.position;
         }
 
-        /* Advances the cursor and returns as soon as a pattern is matched.
+        /* Advances the cursor.
          *
-         * It is not greedy.
-         *  The cursor ends at the end of the match.
-         * The cursor start is lost (at the moment).
-         * Returns a sorted array containing the matched pattern ids.
+         * When one or more pattern is found, the pattern with the highest
+         * priority (== with the lower id) is matched in a half-baked greedy manner :
+         *
+         * (We munch characters as long as we match the pattern, not as long
+         * as the match could be matched
+         *
+         * e.g:
+         *  the pattern (ab)+ search on the string "abab"
+         *  will first find the match from [0,2).
+         *  ... and stop there as aba does not match.
+         *
+         *  A second match [2,4) will then be returned on next call to next.)
+         *
+         * The function then returns true and position holds the offset of what would
+         * be the character right after the match.
+         *
+         * If no match is found the function return false.
          */
         public boolean next() {
             int curState = 0;
-            while (position < seqLength) {
-                curState = automaton.step(curState, this.seq.charAt(position));
-                position++;
+            this.matchingPattern = -1;
+            final int seqLength = this.seq.length();
+            while (this.position < seqLength) {
+                curState = automaton.step(curState, this.seq.charAt(this.position++));
                 if (automaton.atLeastOneAccept[curState]) {
-                    this.matches = automaton.accept[curState];
+                    // We found a match!
+                    this.matchingPattern = automaton.accept[curState][0];
+                    break;
+                }
+            }
+            if (this.matchingPattern == -1) {
+                return false;
+            }
+            //  let's keep advancing as long as we match.
+            final boolean[] matchingStates = inverseAccept[this.matchingPattern];
+            for (;this.position < seqLength; this.position++) {
+                curState = automaton.step(curState, this.seq.charAt(this.position));
+                if (!matchingStates[curState]) {
                     return true;
                 }
             }
-            this.matches = null;
-            return false;
+            return true;
         }
 
 
