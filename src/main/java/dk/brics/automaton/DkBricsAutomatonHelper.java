@@ -8,7 +8,7 @@ public class DkBricsAutomatonHelper {
 
 
     public static char[] pointsUnion(Iterable<Automaton> automata) {
-        Set<Character> points = new TreeSet<Character>();
+        Set<Character> points = new TreeSet<>();
         for (Automaton automaton: automata) {
             for (char c: automaton.getStartPoints()) {
                 points.add(c);
