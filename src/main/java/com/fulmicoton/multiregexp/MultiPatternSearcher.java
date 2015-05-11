@@ -14,7 +14,6 @@ import java.util.Map;
 public class MultiPatternSearcher {
 
     private final MultiPatternAutomaton automaton;
-    // private final boolean[][] inverseAccept;
     private final List<RunAutomaton> individualAutomatons;
     private final List<RunAutomaton> inverseAutomatons;
 
@@ -30,8 +29,6 @@ public class MultiPatternSearcher {
             final Automaton inverseAutomaton = inverseAutomaton(individualAutomaton);
             this.inverseAutomatons.add(new RunAutomaton(inverseAutomaton));
         }
-        final int nbPatterns = this.automaton.getNbPatterns();
-        // this.inverseAccept = inverseAccept(automaton.accept, nbPatterns);
     }
 
     static Automaton inverseAutomaton(final Automaton automaton) {
@@ -59,22 +56,6 @@ public class MultiPatternSearcher {
         inverseAutomaton.addEpsilons(epsilons);
         return inverseAutomaton;
     }
-
-    private static boolean[][] inverseAccept(int[][] accept, final int nbPatterns) {
-        final int nbStates = accept.length;
-        final boolean[][] inverseAccept = new boolean[nbPatterns][];
-        for (int patternId=0; patternId<nbPatterns; patternId++) {
-            inverseAccept[patternId] = new boolean[nbStates];
-        }
-        for (int stateId=0; stateId<nbStates; stateId++) {
-            final int[] acceptedPatterns = accept[stateId];
-            for (int patternId: acceptedPatterns) {
-                inverseAccept[patternId][stateId] = true;
-            }
-        }
-        return inverseAccept;
-    }
-
 
     public Cursor search(CharSequence s) {
         return search(s, 0);
