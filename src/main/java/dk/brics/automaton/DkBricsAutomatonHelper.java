@@ -3,11 +3,9 @@ package dk.brics.automaton;
 import java.util.Set;
 import java.util.TreeSet;
 
-
 public class DkBricsAutomatonHelper {
 
-
-    public static char[] pointsUnion(Iterable<Automaton> automata) {
+    public static char[] pointsUnion(final Iterable<Automaton> automata) {
         Set<Character> points = new TreeSet<>();
         for (Automaton automaton: automata) {
             for (char c: automaton.getStartPoints()) {

@@ -23,9 +23,16 @@ public class MultiPatternTest {
         MultiPatternSearcher.Cursor cursor = multiPatternSearcher.search("ab abc vvv");
         Assert.assertTrue(cursor.next());
         Assert.assertEquals(cursor.match(), 0);
+        Assert.assertEquals(cursor.start(), 0);
+        Assert.assertEquals(cursor.end(), 2);
+
         Assert.assertTrue(cursor.next());
         Assert.assertTrue(cursor.found());
         Assert.assertEquals(cursor.match(), 0);
+        Assert.assertEquals(cursor.start(), 3);
+        Assert.assertEquals(cursor.end(), 5);
+
+
         Assert.assertTrue(cursor.next());
         Assert.assertEquals(cursor.match(), 3);
         Assert.assertTrue(cursor.next());
