@@ -113,22 +113,21 @@ public class MultiPatternSearcher {
         }
 
 
-        /* Advances the cursor.
+        /* Advances the cursor, to the next match of any pattern.
+         * Matches returned cannot overlap.
          *
-         * When one or more pattern is found, the pattern with the highest
-         * priority (== with the lower id) is matched in a half-baked greedy manner :
+         * Any ambiguity is solved according to the following method.
          *
-         * (We munch characters as long as we match the pattern, not as long
-         * as the match could be matched
+         * 1) we advance up to the end of at least one pattern
+         * 2) if more than one pattern is found choose the one the highest
+         * priority (== lower id)
+         * 3) we choose the leftmost possible start for this pattern
+         * to match at the end we found.
+         * 4) Finally, we extend the pattern as much as possible on the right.
          *
-         * e.g:
-         *  the pattern (ab)+ search on the string "abab"
-         *  will first find the match from [0,2).
-         *  ... and stop there as aba does not match.
-         *
-         *  A second match [2,4) will then be returned on next call to next.)
-         *
-         * The function then returns true and position holds the offset of what would
+         * The function then returns true and start(), end() will
+         * return respectively the starting offset of the pattern.
+         * position holds the offset of what would
          * be the character right after the match.
          *
          * If no match is found the function return false.
@@ -137,7 +136,7 @@ public class MultiPatternSearcher {
             this.start = -1;
             this.matchingPattern = -1;
             final int seqLength = this.seq.length();
-            {
+            { // first find a match and "choose the pattern".
                 int state = 0;
                 for (int pos=this.end; pos < seqLength; pos++) {
                     final char c = this.seq.charAt(pos);
