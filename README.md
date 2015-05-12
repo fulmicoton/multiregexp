@@ -60,6 +60,21 @@ We measured the time to search for these 3 regular expression in a 40MB file :
 
 
 
+Using it in your maven project
+--------------------------------------------
+
+Add the following lines in the dependencies section of your `pom.xml` file.
+
+    
+    <dependency>
+        <groupId>fulmicoton</groupId>
+        <artifactId>multiregexp</artifactId>
+        <version>0.4</version>
+    </dependency>
+    
+
+
+
 Matching
 --------------------
 	

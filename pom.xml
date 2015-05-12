@@ -2,10 +2,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.fulmicoton</groupId>
   <artifactId>multiregexp</artifactId>
-  <shortDescription>Matching several expression all at once for blazing performance</shortDescription>
   <description>
-    Compiles many regular expressions into one big deterministic automaton
-    ready for matching, searching, or tokenizing.
+    Library to search/match/tokenize using many regular expression all
+    at once with greater performance.
   </description>
 
   <version>0.3</version>
