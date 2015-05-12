@@ -1,21 +1,21 @@
 multiregexp
 ===========
 
-MultiRegexp is a more efficient to match multiregexp at the same time. You might be interested by it if you have
-a piece of code that looks like.
+`multiregexp` is a more efficient way to match several regular expressions.
+
+It offers a more performant alternative to the anti-pattern of looping on patterns. (This anti-pattern often happens when routing urls, building reports out of logs, searching for terms in a text, etc.)
 
     for (final Pattern pattern: patterns) {
         final Matcher matcher = pattern.matcher(txt);
         // ...
     }
 
-Performant Java library to check for multiple regexp. 
-*This library relies on [dk.brics.automaton](http://www.brics.dk/automaton/) for all the heavy lifting.
 
-All of your regular expressions get compiled into one big deterministic automaton. 
+When using `multiregexp`, your regular expressions are compiled in once single (possible big) deterministic automaton. 
 
-Check [this blog post](http://fulmicoton.com/posts/multiregexp/) to understand how this is working,
-and why it is way faster than your tradition for-loop on patterns.
+This library relies on [dk.brics.automaton](http://www.brics.dk/automaton/) for all the heavy lifting. 
+
+More explanation is available in [this blog post](http://fulmicoton.com/posts/multiregexp/).
 
 
 Disclaimer
@@ -23,37 +23,41 @@ Disclaimer
 
 At the moment, MultiRegexp relies on [dk.brics.automaton](http://www.brics.dk/automaton/) to compile the individual regular expressions. 
 
-It therefore includes the same limitation as this library.
+It therefore presents the same limitations as this library :
 
 * Only a subset of the java regular expression language is handled. 
 * Some character are required to be escaped, even though it is not an issue for Java's pattern.
-* The library does not handle groups.
+* *The library does not handle groups.*
+
+This may change in the future.
 
 
 Benchmark
 --------------------
 
-Using the benchmark described `http://lh3lh3.users.sourceforge.net/reb.shtml`, we searched for URIs, email and dates in the 40MB file using the following regular expressions.
+Following the benchmark described in `http://lh3lh3.users.sourceforge.net/reb.shtml`, we searched for URIs, email and dates using the following patterns.
+
+Groups have been exchanged for anonymous groups to make sure Java was not penalized. The pattern chosen here are not especially pathological.
 
     URI (protocol://server/path): [a-zA-Z][a-zA-Z0-9]*://[^ /]+(?:/[^ ]*)?
     Email (name@server): [^ \@]+\@[^ \@]+
     Date (month/day/year): [0-9][0-9]?/[0-9][0-9]?/[0-9][0-9](?:[0-9][0-9])?
 
-We used three methods to match the regular expressions.
-Java's Pattern, DKU brics, and MultiPattern.
+We measured the time to search for these 3 regular expression in a 40MB file :
 
-    ---------------------------
-    JAVA
+    
+    Java's Pattern
     build time (ms): 4ms
     match time (ms): 20s
-    ---------------------------
-    DKU
+    
+    dku.brics.automaton
     build time (ms): 180ms
     match time (ms): 2s
-    ---------------------------
-    MULTIPATTERN
+    
+    multipattern
     build time (ms): 200ms
     match time (ms): 120ms
+
 
 
 Matching
