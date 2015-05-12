@@ -15,6 +15,32 @@ import java.util.regex.Pattern;
 
 public enum PatternMethods
 {
+
+    MULTIPATTERN {
+        @Override
+        PatternMatchingMethod make(final List<String> patterns) {
+            final List<String> simplifiedPatterns = new ArrayList<>();
+            for (String pattern: patterns) {
+                final String simplifiedPattern = pattern.replaceAll("\\?:", "");
+                simplifiedPatterns.add(simplifiedPattern);
+            }
+
+            final MultiPattern multipattern = MultiPattern.of(simplifiedPatterns);
+            final MultiPatternSearcher searcher = multipattern.searcher();
+            return new PatternMatchingMethod() {
+                @Override
+                public int[] matchCounts(String txt) {
+                    int[] matchCounts = new int[patterns.size()];
+                    Arrays.fill(matchCounts, 0);
+                    final MultiPatternSearcher.Cursor cursor = searcher.search(txt);
+                    while (cursor.next()) {
+                        matchCounts[cursor.match()] += 1;
+                    }
+                    return matchCounts;
+                }
+            };
+        }
+    },
     JAVA {
         @Override
         PatternMatchingMethod make(List<String> patterns) {
@@ -86,32 +112,8 @@ public enum PatternMethods
                 }
             };
         }
-    },
-    MULTIPATTERN {
-        @Override
-        PatternMatchingMethod make(final List<String> patterns) {
-            final List<String> simplifiedPatterns = new ArrayList<>();
-            for (String pattern: patterns) {
-                final String simplifiedPattern = pattern.replaceAll("\\?:", "");
-                simplifiedPatterns.add(simplifiedPattern);
-            }
-
-            final MultiPattern multipattern = MultiPattern.of(simplifiedPatterns);
-            final MultiPatternSearcher searcher = multipattern.searcher();
-            return new PatternMatchingMethod() {
-                @Override
-                public int[] matchCounts(String txt) {
-                    int[] matchCounts = new int[patterns.size()];
-                    Arrays.fill(matchCounts, 0);
-                    final MultiPatternSearcher.Cursor cursor = searcher.search(txt);
-                    while (cursor.next()) {
-                        matchCounts[cursor.match()] += 1;
-                    }
-                    return matchCounts;
-                }
-            };
-        }
-    };
+    }
+    ;
 
     abstract PatternMatchingMethod make(final List<String> patterns);
 

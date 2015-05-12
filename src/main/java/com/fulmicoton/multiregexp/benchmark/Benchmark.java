@@ -20,23 +20,24 @@ public class Benchmark {
         final List<String> patterns = Files.readAllLines(Paths.get(patternFilePath), StandardCharsets.UTF_8);
 
 
-
-        for (final PatternMethods patternMethod: PatternMethods.values()) {
-            System.out.println("---------------------------");
-            System.out.println(patternMethod.name());
-            long start = System.currentTimeMillis();
-            final PatternMethods.PatternMatchingMethod method = patternMethod.make(patterns);
-            long end = System.currentTimeMillis();
-            System.out.println("build time (ms):   " + (end - start));
-            {
-                start = System.currentTimeMillis();
-                final int[] patternCounts = method.matchCounts(txt);
-                end = System.currentTimeMillis();
-                System.out.println("match time (ms):   " + (end - start));
-                for (int patternCount: patternCounts) {
-                    System.out.print(patternCount + " ");
+        while (true) {
+            for (final PatternMethods patternMethod: PatternMethods.values()) {
+                System.out.println("---------------------------");
+                System.out.println(patternMethod.name());
+                long start = System.currentTimeMillis();
+                final PatternMethods.PatternMatchingMethod method = patternMethod.make(patterns);
+                long end = System.currentTimeMillis();
+                System.out.println("build time (ms):   " + (end - start));
+                {
+                    start = System.currentTimeMillis();
+                    final int[] patternCounts = method.matchCounts(txt);
+                    end = System.currentTimeMillis();
+                    System.out.println("match time (ms):   " + (end - start));
+                    for (int patternCount: patternCounts) {
+                        System.out.print(patternCount + " ");
+                    }
+                    System.out.println();
                 }
-                System.out.println();
             }
         }
     }
