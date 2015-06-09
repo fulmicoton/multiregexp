@@ -10,6 +10,7 @@ import dk.brics.automaton.RunAutomaton;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +23,42 @@ public enum PatternMethods
             for (final String pattern: patterns) {
                 compiledPatterns.add(Pattern.compile(pattern));
             }
+            return new PatternMatchingMethod() {
+
+                private int countPattern(final Pattern pattern,
+                                         final String txt) {
+
+                    final Matcher matcher = pattern.matcher(txt);
+                    int count = 0;
+                    while(matcher.find()) {
+                        count++;
+                    }
+                    return count;
+                }
+
+                @Override
+                public int[] matchCounts(String txt) {
+                    int[] matchCounts = new int[compiledPatterns.size()];
+                    int patternId = 0;
+                    for (Pattern compiledPattern: compiledPatterns) {
+                        matchCounts[patternId] = countPattern(compiledPattern, txt);
+                        patternId++;
+                    }
+                    return matchCounts;
+                }
+            };
+        }
+    },
+    JAVA_GROUPS {
+        @Override
+        PatternMatchingMethod make(List<String> patterns) {
+            final List<Pattern> compiledPatterns = new ArrayList<>();
+            final StringBuilder builder = new StringBuilder();
+            final StringJoiner joiner = new StringJoiner("|");
+            for (final String pattern: patterns) {
+                joiner.add("(?:" + pattern + ")");
+            }
+            compiledPatterns.add(Pattern.compile(joiner.toString()));
             return new PatternMatchingMethod() {
 
                 private int countPattern(final Pattern pattern,
