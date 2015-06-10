@@ -47,16 +47,16 @@ We measured the time to search for these 3 regular expression in a 40MB file :
 
     
     Java's Pattern
-    build time (ms): 4ms
-    match time (ms): 20s
+    build time (ms): 2ms
+    match time (ms): 2.5s
     
     dku.brics.automaton
-    build time (ms): 180ms
-    match time (ms): 2s
+    build time (ms): 35ms
+    match time (ms): 1s
     
     multipattern
-    build time (ms): 200ms
-    match time (ms): 120ms
+    build time (ms): 60ms
+    match time (ms): 105ms
 
 
 
