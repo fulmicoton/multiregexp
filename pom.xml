@@ -37,11 +37,6 @@
       <version>1.11-8</version>
     </dependency>
     <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>org.json</artifactId>
-      <version>chargebee-1.0</version>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.8.2</version>
