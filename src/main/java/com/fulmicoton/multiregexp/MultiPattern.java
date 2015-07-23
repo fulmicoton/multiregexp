@@ -36,11 +36,10 @@ public class MultiPattern {
 
     /**
      * Equivalent of Pattern.compile, but the result is only valid for pattern search.
-     * The searcher will return the first occurence of a pattern.
+     * The searcher will return the first occurrence of a pattern.
      *
      * This operation is costly, make sure to cache its result when performing
      * search with the same patterns against the different strings.
-
      *
      * @return A searcher object
      */
@@ -72,4 +71,5 @@ public class MultiPattern {
         final MultiPatternAutomaton matcherAutomaton = makeAutomatonWithPrefix("");
         return new MultiPatternMatcher(matcherAutomaton);
     }
+
 }
