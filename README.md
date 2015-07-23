@@ -5,11 +5,12 @@ multiregexp
 
 It offers a more performant alternative to the anti-pattern of looping on patterns. (This anti-pattern often happens when routing urls, building reports out of logs, searching for terms in a text, etc.)
 
+```java
     for (final Pattern pattern: patterns) {
         final Matcher matcher = pattern.matcher(txt);
         // ...
     }
-
+```
 
 When using `multiregexp`, your regular expressions are compiled in once single (possible big) deterministic automaton. 
 
@@ -65,19 +66,20 @@ Using it in your maven project
 
 Add the following lines in the dependencies section of your `pom.xml` file.
 
-    
+```xml    
     <dependency>
         <groupId>com.fulmicoton</groupId>
         <artifactId>multiregexp</artifactId>
         <version>0.3</version>
     </dependency>
-    
+```    
 
 
 
 Matching
 --------------------
 	
+```java
 	import com.fulmicoton.multiregexp.MultiPatternMatcher;
 	import com.fulmicoton.multiregexp.MultiPattern;
 
@@ -94,11 +96,12 @@ Matching
             "(def)+"   // 5
     ).matcher();
     int[] matching = multiPattern.match("abc"); // return {1, 2}
-
+```
 
 Searching 
 ---------------------
-	
+
+```java
 	import com.fulmicoton.multiregexp.MultiPatternSearcher;
 	import com.fulmicoton.multiregexp.MultiPattern;
 
@@ -117,4 +120,4 @@ Searching
         int start = cursor.start();
         int end = cursor.end();
     }
-
+```
