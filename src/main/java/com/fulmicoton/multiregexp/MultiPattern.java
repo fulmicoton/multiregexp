@@ -25,7 +25,7 @@ public class MultiPattern {
 
     public MultiPatternAutomaton makeAutomatonWithPrefix(String prefix) {
         final List<Automaton> automata = new ArrayList<>();
-        for (String ptn: this.patterns) {
+        for (final String ptn: this.patterns) {
             final String prefixedPattern = prefix + ptn;
             final Automaton automaton = new RegExp(prefixedPattern).toAutomaton();
             automaton.minimize();

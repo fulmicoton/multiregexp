@@ -56,16 +56,7 @@ public class TokenizerTest {
                 .addRule(TEST.ABD, "abd")
                 .addRule(TEST.D, "b?d")
         .addRule(TEST.BCD, "bcd");
-        {
-            final String txt = "abcd";
-            final Iterator<Token<TEST>> tokenIt =  lexer.scan(txt).iterator();
-            Assert.assertTrue(tokenIt.hasNext());
-            Assert.assertEquals(tokenIt.next(), new Token<>(TEST.ABC, "abc"));
-            Assert.assertTrue(tokenIt.hasNext());
-            Assert.assertEquals(tokenIt.next(), new Token<>(TEST.D, "d"));
-            Assert.assertFalse(tokenIt.hasNext());
-            Assert.assertEquals(tokenIt.next(), null);
-        }
+
         {
             final String txt = "abd";
             final Iterator<Token<TEST>> tokenIt =  lexer.scan(txt).iterator();
@@ -73,6 +64,16 @@ public class TokenizerTest {
             Assert.assertEquals(tokenIt.next(), new Token<>(TEST.A, "a"));
             Assert.assertTrue(tokenIt.hasNext());
             Assert.assertEquals(tokenIt.next(), new Token<>(TEST.D, "bd"));
+            Assert.assertFalse(tokenIt.hasNext());
+            Assert.assertEquals(tokenIt.next(), null);
+        }
+        {
+            final String txt = "abcd";
+            final Iterator<Token<TEST>> tokenIt =  lexer.scan(txt).iterator();
+            Assert.assertTrue(tokenIt.hasNext());
+            Assert.assertEquals(tokenIt.next(), new Token<>(TEST.ABC, "abc"));
+            Assert.assertTrue(tokenIt.hasNext());
+            Assert.assertEquals(tokenIt.next(), new Token<>(TEST.D, "d"));
             Assert.assertFalse(tokenIt.hasNext());
             Assert.assertEquals(tokenIt.next(), null);
         }
