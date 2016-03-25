@@ -1,6 +1,7 @@
 package com.fulmicoton.multiregexp;
 
 
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -24,8 +25,12 @@ public class Lexer<T extends Enum> {
         return this.automaton;
     }
 
-    public Scanner<T> scannerFor(CharSequence seq) {
-        return new Scanner<>(this.getAutomaton(), seq, this.types);
+    public Scanner<T> scannerFor(final Reader reader) {
+        return new Scanner<T>(this.getAutomaton(), reader, this.types);
+    }
+
+    public Scanner<T> scannerFor(final CharSequence seq) {
+        return new Scanner<T>(this.getAutomaton(), seq, this.types);
     }
 
     public Iterable<Token<T>> scan(final CharSequence seq) {
