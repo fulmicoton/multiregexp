@@ -5,6 +5,8 @@ import java.util.TreeSet;
 
 public class DkBricsAutomatonHelper {
 
+    private DkBricsAutomatonHelper() {}
+
     public static char[] pointsUnion(final Iterable<Automaton> automata) {
         Set<Character> points = new TreeSet<>();
         for (Automaton automaton: automata) {

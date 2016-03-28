@@ -6,8 +6,8 @@ import java.util.Iterator;
 
 public class Lexer<T extends Enum> {
 
-    private final ArrayList<T> types = new ArrayList<T>() ;
-    private final ArrayList<String> patterns = new ArrayList<String>();
+    private final ArrayList<T> types = new ArrayList<>() ;
+    private final ArrayList<String> patterns = new ArrayList<>();
     private transient MultiPatternAutomaton automaton = null;
 
     public Lexer<T> addRule(final T tokenType, final String pattern) {
@@ -25,7 +25,7 @@ public class Lexer<T extends Enum> {
     }
 
     public Scanner<T> scannerFor(CharSequence seq) {
-        return new Scanner<T>(this.getAutomaton(), seq, this.types);
+        return new Scanner<>(this.getAutomaton(), seq, this.types);
     }
 
     public Iterable<Token<T>> scan(final CharSequence seq) {

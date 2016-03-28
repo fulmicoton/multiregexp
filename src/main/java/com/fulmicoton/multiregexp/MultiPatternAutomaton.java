@@ -30,7 +30,7 @@ public class MultiPatternAutomaton {
         this.stride = points.length;
         this.atLeastOneAccept = new boolean[accept.length];
         for (int i=0; i<accept.length; i++) {
-            this.atLeastOneAccept[i] = (this.accept[i].length > 0);
+            this.atLeastOneAccept[i] = this.accept[i].length > 0;
         }
         this.nbPatterns = nbPatterns;
     }
@@ -120,7 +120,7 @@ public class MultiPatternAutomaton {
     }
 
     public int step(final int state, final char c) {
-        return transitions[((state * this.stride) + alphabet[c - Character.MIN_VALUE])];
+        return transitions[(state * this.stride) + alphabet[c - Character.MIN_VALUE]];
     }
 
     public int getNbPatterns() {
