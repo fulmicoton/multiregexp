@@ -11,7 +11,7 @@ public class Token<T> {
     }
 
     public static <T extends Enum> Token<T> fromScanner(Scanner<T> scanner) {
-        return new Token<T>(scanner.type, scanner.tokenString().toString());
+        return new Token<>(scanner.type, scanner.tokenString().toString());
     }
 
     @Override
