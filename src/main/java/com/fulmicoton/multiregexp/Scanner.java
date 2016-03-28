@@ -4,6 +4,7 @@ import java.io.CharArrayReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Scanner<T extends Enum> {
 
@@ -17,14 +18,27 @@ public class Scanner<T extends Enum> {
     private final Reader reader;
 
     private boolean endOfReader = false;
-    private final ArrayList<T> tokenTypes;
-    // private int cursor;
+    private final List<T> tokenTypes;
     private int readUntil;
 
     public T type;
     public int start = 0;
     public int end = 0;
     public int readerLength = Integer.MAX_VALUE;
+
+    public Scanner(final MultiPatternAutomaton automaton,
+                   final CharSequence charSequence,
+                   final List<T> tokenTypes) {
+        this(automaton, readerFromCharSequence(charSequence), tokenTypes);
+    }
+
+    public Scanner(final MultiPatternAutomaton automaton,
+                   final Reader reader,
+                   final List<T> tokenTypes) {
+        this.automaton = automaton;
+        this.reader = reader;
+        this.tokenTypes = tokenTypes;
+    }
 
     private static Reader readerFromCharSequence(final CharSequence charSeq) {
         final int numChars = charSeq.length();
@@ -33,20 +47,6 @@ public class Scanner<T extends Enum> {
             chars[i] = charSeq.charAt(i);
         }
         return new CharArrayReader(chars);
-    }
-
-    public Scanner(final MultiPatternAutomaton automaton,
-                   final CharSequence charSequence,
-                   final ArrayList<T> tokenTypes) {
-        this(automaton, readerFromCharSequence(charSequence), tokenTypes);
-    }
-
-    public Scanner(final MultiPatternAutomaton automaton,
-                   final Reader reader,
-                   final ArrayList<T> tokenTypes) {
-        this.automaton = automaton;
-        this.reader = reader;
-        this.tokenTypes = tokenTypes;
     }
 
 
