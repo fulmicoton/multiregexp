@@ -26,6 +26,16 @@ public class Scanner<T extends Enum> {
     public int end = 0;
     public int readerLength = Integer.MAX_VALUE;
 
+
+    public void reset() {
+        this.start = 0;
+        this.end = 0;
+        this.endOfReader = false;
+        this.type = null;
+        this.readerLength = Integer.MAX_VALUE;
+        this.readUntil = 0;
+    }
+
     private static Reader readerFromCharSequence(final CharSequence charSeq) {
         final int numChars = charSeq.length();
         final char[] chars = new char[numChars];
@@ -90,7 +100,7 @@ public class Scanner<T extends Enum> {
 
     }
 
-    boolean next() throws ScanException, IOException {
+    public boolean next() throws ScanException, IOException {
         // we start at the end of the last emitted token
         if (this.end == this.readerLength) {
             return false;
@@ -149,6 +159,7 @@ public class Scanner<T extends Enum> {
     private CharSequence subSequence(final int start, final int end) {
         return new CharSeq(this.circularBuffer, start, end-start);
     }
+
 
     public static class CharSeq implements CharSequence {
         private final char[] buffer;
