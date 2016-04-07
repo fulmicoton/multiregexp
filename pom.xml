@@ -7,7 +7,7 @@
     at once with greater performance.
   </description>
 
-  <version>0.5</version>
+  <version>0.5.1</version>
   <packaging>jar</packaging>
   <name>MultiRegexp</name>
   <url>https://github.com/fulmicoton/multiregexp</url>
