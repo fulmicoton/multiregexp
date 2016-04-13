@@ -50,14 +50,14 @@ public class MultiPattern {
      */
     public MultiPatternSearcher searcher(boolean tableize) {
         final MultiPatternAutomaton searcherAutomaton = makeAutomatonWithPrefix(".*");
-        final List<Automaton> indidivualAutomatons = new ArrayList<>();
+        final List<Automaton> individualAutomatons = new ArrayList<>();
         for (final String pattern: this.patterns) {
             final Automaton automaton = new RegExp(pattern).toAutomaton();
             automaton.minimize();
             automaton.determinize();
-            indidivualAutomatons.add(automaton);
+            individualAutomatons.add(automaton);
         }
-        return new MultiPatternSearcher(searcherAutomaton, indidivualAutomatons, tableize);
+        return new MultiPatternSearcher(searcherAutomaton, individualAutomatons, tableize);
     }
 
 
