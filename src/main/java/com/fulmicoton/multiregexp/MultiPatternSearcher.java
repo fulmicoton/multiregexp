@@ -6,12 +6,15 @@ import dk.brics.automaton.State;
 import dk.brics.automaton.StatePair;
 import dk.brics.automaton.Transition;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MultiPatternSearcher {
+public class MultiPatternSearcher implements Serializable {
+
+    private static final long serialVersionUID = -1812442985139693661L;
 
     private final MultiPatternAutomaton automaton;
     private final List<RunAutomaton> individualAutomatons;

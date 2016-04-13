@@ -1,5 +1,6 @@
 package com.fulmicoton.multiregexp;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,7 +12,9 @@ import dk.brics.automaton.Automaton;
 import dk.brics.automaton.DkBricsAutomatonHelper;
 import dk.brics.automaton.State;
 
-public class MultiPatternAutomaton {
+public class MultiPatternAutomaton implements Serializable {
+
+    private static final long serialVersionUID = -8269666436361824366L;
 
     public final int[][] accept;
     final boolean[] atLeastOneAccept;
