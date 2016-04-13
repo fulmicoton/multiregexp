@@ -21,16 +21,23 @@ public class MultiPatternSearcher implements Serializable {
     private final List<RunAutomaton> inverseAutomatons;
 
     MultiPatternSearcher(final MultiPatternAutomaton automaton,
-                         final List<Automaton> individualAutomatons) {
+                         final List<Automaton> individualAutomatons)
+    {
+        this(automaton, individualAutomatons, true);
+    }
+
+    MultiPatternSearcher(final MultiPatternAutomaton automaton,
+                         final List<Automaton> individualAutomatons,
+                         boolean tableize) {
         this.automaton = automaton;
         this.individualAutomatons = new ArrayList<>();
         for (final Automaton individualAutomaton: individualAutomatons) {
-            this.individualAutomatons.add(new RunAutomaton(individualAutomaton));
+            this.individualAutomatons.add(new RunAutomaton(individualAutomaton, tableize));
         }
         this.inverseAutomatons = new ArrayList<>(this.individualAutomatons.size());
         for (final Automaton individualAutomaton: individualAutomatons) {
             final Automaton inverseAutomaton = inverseAutomaton(individualAutomaton);
-            this.inverseAutomatons.add(new RunAutomaton(inverseAutomaton));
+            this.inverseAutomatons.add(new RunAutomaton(inverseAutomaton, tableize));
         }
     }
 

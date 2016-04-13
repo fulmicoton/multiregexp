@@ -34,6 +34,11 @@ public class MultiPattern {
         return MultiPatternAutomaton.make(automata);
     }
 
+    public MultiPatternSearcher searcher()
+    {
+        return searcher(true);
+    }
+
     /**
      * Equivalent of Pattern.compile, but the result is only valid for pattern search.
      * The searcher will return the first occurrence of a pattern.
@@ -43,7 +48,7 @@ public class MultiPattern {
      *
      * @return A searcher object
      */
-    public MultiPatternSearcher searcher() {
+    public MultiPatternSearcher searcher(boolean tableize) {
         final MultiPatternAutomaton searcherAutomaton = makeAutomatonWithPrefix(".*");
         final List<Automaton> indidivualAutomatons = new ArrayList<>();
         for (final String pattern: this.patterns) {
@@ -52,7 +57,7 @@ public class MultiPattern {
             automaton.determinize();
             indidivualAutomatons.add(automaton);
         }
-        return new MultiPatternSearcher(searcherAutomaton, indidivualAutomatons);
+        return new MultiPatternSearcher(searcherAutomaton, indidivualAutomatons, tableize);
     }
 
 
