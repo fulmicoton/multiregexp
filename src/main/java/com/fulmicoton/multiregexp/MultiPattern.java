@@ -31,12 +31,7 @@ public class MultiPattern {
             automaton.minimize();
             automata.add(automaton);
         }
-        return MultiPatternAutomaton.make(automata);
-    }
-
-    public MultiPatternSearcher searcher()
-    {
-        return searcher(true);
+        return MultiPatternAutomaton.multithreadedMake(automata);
     }
 
     /**
@@ -48,7 +43,13 @@ public class MultiPattern {
      *
      * @return A searcher object
      */
-    public MultiPatternSearcher searcher(boolean tableize) {
+    public MultiPatternSearcher searcher()
+    {
+        return searcher(true);
+    }
+
+
+    public MultiPatternSearcher searcher(final boolean tableize) {
         final MultiPatternAutomaton searcherAutomaton = makeAutomatonWithPrefix(".*");
         final List<Automaton> individualAutomatons = new ArrayList<>();
         for (final String pattern: this.patterns) {
