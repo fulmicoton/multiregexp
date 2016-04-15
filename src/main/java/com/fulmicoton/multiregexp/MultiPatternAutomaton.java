@@ -102,8 +102,7 @@ public class MultiPatternAutomaton
                             transitionMap.put(stateId, curTransitions);
 
                             for (int c = 0; c < points.length; c++) {
-                                final char point = points[c];
-                                final MultiState destState = visitingState.step(point);
+                                final MultiState destState = visitingState.step(points[c]);
                                 if (destState.isNull()) {
                                     curTransitions[c] = -1;
                                 } else {
