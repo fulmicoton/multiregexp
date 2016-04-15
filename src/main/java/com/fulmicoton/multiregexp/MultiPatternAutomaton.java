@@ -107,9 +107,10 @@ public class MultiPatternAutomaton
                                 if (destState.isNull()) {
                                     curTransitions[c] = -1;
                                 } else {
-                                    final int destStateId;
+                                    Integer destStateId;
                                     synchronized (multiStateIndex) {
-                                        if (!multiStateIndex.containsKey(destState)) {
+                                        destStateId = multiStateIndex.get(destState);
+                                        if (destStateId == null) {
                                             destStateId = multiStateIndex.size();
                                             multiStateIndex.put(destState, destStateId);
                                             statesToVisits.add(destState);
@@ -117,8 +118,6 @@ public class MultiPatternAutomaton
                                                 // wake a thread to process destState
                                                 lockObject.notify();
                                             }
-                                        } else {
-                                            destStateId = multiStateIndex.get(destState);
                                         }
                                     }
                                     curTransitions[c] = destStateId;
