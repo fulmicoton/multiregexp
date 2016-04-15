@@ -95,7 +95,7 @@ public class MultiPatternAutomaton
                     while (true) {
                         MultiState visitingState;
                         while ((visitingState = statesToVisits.poll()) != null) {
-                            assert multiStateIndex.containsKey(visitingState);
+//                            assert multiStateIndex.containsKey(visitingState);
 
                             int stateId = multiStateIndex.get(visitingState);
                             final int[] curTransitions = new int[points.length];
@@ -114,8 +114,8 @@ public class MultiPatternAutomaton
                                             multiStateIndex.put(destState, destStateId);
                                             statesToVisits.add(destState);
                                             synchronized (lockObject) {
-                                                // wake threads to process destState
-                                                lockObject.notifyAll();
+                                                // wake a thread to process destState
+                                                lockObject.notify();
                                             }
                                         } else {
                                             destStateId = multiStateIndex.get(destState);
@@ -142,13 +142,7 @@ public class MultiPatternAutomaton
                                 catch (InterruptedException ignore) {
                                 }
                             }
-                            // if there are no active threads then we are done
-                            if (activeThreads.isEmpty()) {
-                                // end this thread
-                                break;
-                            } else {
-                                activeThreads.add(Thread.currentThread());
-                            }
+                            activeThreads.add(Thread.currentThread());
                         }
                     }
                     doneSignal.countDown();
