@@ -97,8 +97,8 @@ public class MultiPatternAutomaton
                         while ((visitingState = statesToVisits.poll()) != null) {
 //                            assert multiStateIndex.containsKey(visitingState);
 
-                            int stateId = multiStateIndex.get(visitingState);
                             final int[] curTransitions = new int[points.length];
+                            final int stateId = multiStateIndex.get(visitingState);
                             transitionMap.put(stateId, curTransitions);
 
                             for (int c = 0; c < points.length; c++) {
