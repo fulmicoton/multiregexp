@@ -94,6 +94,11 @@ public class MultiPatternSearcher
         public int start(int patternIndex) {
             if (this.matchingPatterns == null) {
                 return -1;
+            } else if (this.matchingPatternsStart == null) {
+                this.matchingPatternsStart = new int[this.matchingPatterns.length];
+                for (int i = 0; i < this.matchingPatterns.length; i++) {
+                    this.matchingPatternsStart[i] = -1;
+                }
             }
 
             if (this.matchingPatternsStart[patternIndex] == -1) {
@@ -122,6 +127,8 @@ public class MultiPatternSearcher
         public int end(int patternIndex) {
             if (this.matchingPatterns == null) {
                 return -1;
+            } else if (this.matchingPatternsEnd == null) {
+                this.matchingPatternsEnd = new int[this.matchingPatterns.length];
             }
 
             if (this.matchingPatternsEnd[patternIndex] == 0) {
@@ -197,18 +204,12 @@ public class MultiPatternSearcher
             this.matchingPatternsEnd = null;
             final int seqLength = this.seq.length();
             // first find a match and "choose the pattern".
-            int state = 0;
-            for (int pos = this.currentPosition; pos < seqLength; pos++) {
+            for (int state = 0, pos = this.currentPosition; pos < seqLength; pos++) {
                 final char c = this.seq.charAt(pos);
                 state = automaton.step(state, c);
                 if (automaton.atLeastOneAccept[state]) {
                     // We found a match!
                     this.matchingPatterns = automaton.accept[state];
-                    this.matchingPatternsStart = new int[this.matchingPatterns.length];
-                    this.matchingPatternsEnd = new int[this.matchingPatterns.length];
-                    for (int i = 0; i < this.matchingPatterns.length; i++) {
-                        this.matchingPatternsStart[i] = -1;
-                    }
                     this.currentPosition = pos + 1;
                     break;
                 }
