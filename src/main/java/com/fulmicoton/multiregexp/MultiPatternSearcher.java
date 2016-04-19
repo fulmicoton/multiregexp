@@ -30,11 +30,11 @@ public class MultiPatternSearcher
                          final List<Automaton> individualAutomatons,
                          boolean tableize) {
         this.automaton = automaton;
-        this.individualAutomatons = new ArrayList<>();
+        this.individualAutomatons = new ArrayList<>(individualAutomatons.size());
         for (final Automaton individualAutomaton : individualAutomatons) {
             this.individualAutomatons.add(new RunAutomaton(individualAutomaton, tableize));
         }
-        this.inverseAutomatons = new ArrayList<>(this.individualAutomatons.size());
+        this.inverseAutomatons = new ArrayList<>(individualAutomatons.size());
         for (final Automaton individualAutomaton : individualAutomatons) {
             final Automaton inverseAutomaton = inverseAutomaton(individualAutomaton);
             this.inverseAutomatons.add(new RunAutomaton(inverseAutomaton, tableize));
@@ -42,7 +42,7 @@ public class MultiPatternSearcher
     }
 
     static Automaton inverseAutomaton(final Automaton automaton) {
-        final Map<State, State> stateMapping = new HashMap<>();
+        final Map<State, State> stateMapping = new HashMap<>(automaton.getStates().size());
         for (final State state : automaton.getStates()) {
             stateMapping.put(state, new State());
         }
@@ -57,7 +57,7 @@ public class MultiPatternSearcher
         stateMapping.get(automaton.getInitialState()).setAccept(true);
         final State initialState = new State();
         inverseAutomaton.setInitialState(initialState);
-        final List<StatePair> epsilons = new ArrayList<>();
+        final List<StatePair> epsilons = new ArrayList<>(automaton.getAcceptStates().size());
         for (final State acceptState : automaton.getAcceptStates()) {
             final State invOrigState = stateMapping.get(acceptState);
             final StatePair statePair = new StatePair(initialState, invOrigState);
