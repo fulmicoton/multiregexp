@@ -23,10 +23,17 @@ public class MultiPattern {
         return new MultiPattern(Arrays.asList(patterns));
     }
 
-    public MultiPatternAutomaton makeAutomatonWithPrefix(String prefix) {
+    public MultiPatternAutomaton makeAutomatonWithPrefix(String prefix, String... exceptions) {
         final List<Automaton> automata = new ArrayList<>();
-        for (final String ptn: this.patterns) {
-            final String prefixedPattern = prefix + ptn;
+        for (final String ptn : this.patterns) {
+            boolean addPrefix = true;
+            for (String exception : exceptions) {
+                if (ptn.startsWith(exception)) {
+                    addPrefix = false;
+                    break;
+                }
+            }
+            final String prefixedPattern = (addPrefix ? prefix: "") + ptn;
             final Automaton automaton = new RegExp(prefixedPattern).toAutomaton();
             automaton.minimize();
             automata.add(automaton);
@@ -43,16 +50,15 @@ public class MultiPattern {
      *
      * @return A searcher object
      */
-    public MultiPatternSearcher searcher()
-    {
+    public MultiPatternSearcher searcher() {
         return searcher(true);
     }
 
 
     public MultiPatternSearcher searcher(final boolean tableize) {
-        final MultiPatternAutomaton searcherAutomaton = makeAutomatonWithPrefix(".*");
+        final MultiPatternAutomaton searcherAutomaton = makeAutomatonWithPrefix(".*", ".*", "^");
         final List<Automaton> individualAutomatons = new ArrayList<>();
-        for (final String pattern: this.patterns) {
+        for (final String pattern : this.patterns) {
             final Automaton automaton = new RegExp(pattern).toAutomaton();
             automaton.minimize();
             automaton.determinize();
