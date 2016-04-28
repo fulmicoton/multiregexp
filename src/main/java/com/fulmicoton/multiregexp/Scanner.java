@@ -14,7 +14,7 @@ public class Scanner<T extends Enum> {
     private final MultiPatternAutomaton automaton;
 
     private final char[] circularBuffer = new char[1 << BUFFER_NUM_BITS];
-    private final Reader reader;
+    public Reader reader;
 
     private boolean endOfReader = false;
     private final ArrayList<T> tokenTypes;
@@ -27,7 +27,8 @@ public class Scanner<T extends Enum> {
     public int readerLength = Integer.MAX_VALUE;
 
 
-    public void reset() {
+    public void reset(final Reader reader) {
+        this.reader = reader;
         this.start = 0;
         this.end = 0;
         this.endOfReader = false;
@@ -84,8 +85,12 @@ public class Scanner<T extends Enum> {
             return this.circularBuffer[i & MASK];
         }
         if (i == this.readUntil) {
+            if (this.endOfReader) {
+                return 0;
+            }
             final int cInt = this.reader.read();
             if (cInt < 0) {
+                this.endOfReader = true;
                 this.readerLength = i;
                 return 0;
             }
@@ -146,6 +151,9 @@ public class Scanner<T extends Enum> {
         // No tokens have been found. Raised an expression
         // with a bit of context, and the offset in the string.
         if (highestPriorityMatch == Integer.MAX_VALUE) {
+            if (this.start == 0) {
+                return false;
+            }
             final int contextStart = Math.max(0, this.start - 10);
             final int contextEnd = Math.min(this.start + 10, this.readUntil);
             final String context = this.subSequence(contextStart, this.start) + "|" +  this.subSequence(this.start, contextEnd);
