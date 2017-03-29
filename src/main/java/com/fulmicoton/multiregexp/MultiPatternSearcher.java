@@ -6,12 +6,16 @@ import dk.brics.automaton.State;
 import dk.brics.automaton.StatePair;
 import dk.brics.automaton.Transition;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MultiPatternSearcher {
+public class MultiPatternSearcher
+        implements Serializable {
+
+    private static final long serialVersionUID = -1812442985139693661L;
 
     private final MultiPatternAutomaton automaton;
     private final List<RunAutomaton> individualAutomatons;
@@ -19,25 +23,31 @@ public class MultiPatternSearcher {
 
     MultiPatternSearcher(final MultiPatternAutomaton automaton,
                          final List<Automaton> individualAutomatons) {
+        this(automaton, individualAutomatons, true);
+    }
+
+    MultiPatternSearcher(final MultiPatternAutomaton automaton,
+                         final List<Automaton> individualAutomatons,
+                         boolean tableize) {
         this.automaton = automaton;
-        this.individualAutomatons = new ArrayList<>();
-        for (final Automaton individualAutomaton: individualAutomatons) {
-            this.individualAutomatons.add(new RunAutomaton(individualAutomaton));
+        this.individualAutomatons = new ArrayList<>(individualAutomatons.size());
+        for (final Automaton individualAutomaton : individualAutomatons) {
+            this.individualAutomatons.add(new RunAutomaton(individualAutomaton, tableize));
         }
-        this.inverseAutomatons = new ArrayList<>(this.individualAutomatons.size());
-        for (final Automaton individualAutomaton: individualAutomatons) {
+        this.inverseAutomatons = new ArrayList<>(individualAutomatons.size());
+        for (final Automaton individualAutomaton : individualAutomatons) {
             final Automaton inverseAutomaton = inverseAutomaton(individualAutomaton);
-            this.inverseAutomatons.add(new RunAutomaton(inverseAutomaton));
+            this.inverseAutomatons.add(new RunAutomaton(inverseAutomaton, tableize));
         }
     }
 
     static Automaton inverseAutomaton(final Automaton automaton) {
-        final Map<State, State> stateMapping = new HashMap<>();
-        for (final State state: automaton.getStates()) {
+        final Map<State, State> stateMapping = new HashMap<>(automaton.getStates().size());
+        for (final State state : automaton.getStates()) {
             stateMapping.put(state, new State());
         }
-        for (final State state: automaton.getStates()) {
-            for (final Transition transition: state.getTransitions()) {
+        for (final State state : automaton.getStates()) {
+            for (final Transition transition : state.getTransitions()) {
                 final State invDest = stateMapping.get(state);
                 final State invOrig = stateMapping.get(transition.getDest());
                 invOrig.addTransition(new Transition(transition.getMin(), transition.getMax(), invDest));
@@ -47,8 +57,8 @@ public class MultiPatternSearcher {
         stateMapping.get(automaton.getInitialState()).setAccept(true);
         final State initialState = new State();
         inverseAutomaton.setInitialState(initialState);
-        final List<StatePair> epsilons = new ArrayList<>();
-        for (final State acceptState: automaton.getAcceptStates()) {
+        final List<StatePair> epsilons = new ArrayList<>(automaton.getAcceptStates().size());
+        for (final State acceptState : automaton.getAcceptStates()) {
             final State invOrigState = stateMapping.get(acceptState);
             final StatePair statePair = new StatePair(initialState, invOrigState);
             epsilons.add(statePair);
@@ -67,30 +77,105 @@ public class MultiPatternSearcher {
 
     public class Cursor {
         private final CharSequence seq;
-        private int matchingPattern = -1;
-        private int end = 0;
-        private int start = -1;
+        private int[] matchingPatterns = null;
+        private int[] matchingPatternsStart = null;
+        private int[] matchingPatternsEnd = null;
+        private int currentPosition = 0;
 
         Cursor(CharSequence seq, int position) {
             this.seq = seq;
-            this.end = position;
+            this.currentPosition = position;
         }
 
         public int start() {
-            return this.start;
+            return start(0);
+        }
+
+        public int start(int patternIndex) {
+            if (this.matchingPatterns == null) {
+                return -1;
+            } else if (this.matchingPatternsStart == null) {
+                this.matchingPatternsStart = new int[this.matchingPatterns.length];
+                for (int i = 0; i < this.matchingPatterns.length; i++) {
+                    this.matchingPatternsStart[i] = -1;
+                }
+            }
+
+            if (this.matchingPatternsStart[patternIndex] == -1) {
+                // we rewind using the backward automaton to find the start of the pattern.
+                final RunAutomaton backwardAutomaton = inverseAutomatons.get(this.matchingPatterns[patternIndex]);
+                int state = backwardAutomaton.getInitialState();
+                for (int pos = this.currentPosition - 1; pos >= 0; pos--) {
+                    final char c = this.seq.charAt(pos);
+                    state = backwardAutomaton.step(state, c);
+                    if (state == -1) {
+                        break;
+                    }
+                    if (backwardAutomaton.isAccept(state)) {
+                        this.matchingPatternsStart[patternIndex] = pos;
+                    }
+                }
+            }
+
+            return this.matchingPatternsStart[patternIndex];
         }
 
         public int end() {
-            return this.end;
+            return end(0);
+        }
+
+        public int end(int patternIndex) {
+            if (this.matchingPatterns == null) {
+                return -1;
+            } else if (this.matchingPatternsEnd == null) {
+                this.matchingPatternsEnd = new int[this.matchingPatterns.length];
+            }
+
+            if (this.matchingPatternsEnd[patternIndex] == 0) {
+                final int seqLength = this.seq.length();
+                final int start = start(patternIndex);
+                // we go forward again using the forward automaton to find the end of the pattern.
+                final RunAutomaton forwardAutomaton = individualAutomatons.get(this.matchingPatterns[patternIndex]);
+                int state = forwardAutomaton.getInitialState();
+                for (int pos = start; pos < seqLength; pos++) {
+                    final char c = this.seq.charAt(pos);
+                    state = forwardAutomaton.step(state, c);
+                    if (state == -1) {
+                        break;
+                    }
+                    if (forwardAutomaton.isAccept(state)) {
+                        this.matchingPatternsEnd[patternIndex] = pos + 1;
+                    }
+                }
+            }
+
+            return this.matchingPatternsEnd[patternIndex];
         }
 
 
         public int match() {
-            return this.matchingPattern;
+            return match(0);
+        }
+
+        public int match(int patternIndex) {
+            return this.matchingPatterns == null ? -1: this.matchingPatterns[patternIndex];
+        }
+
+        public String pattern() {
+            return pattern(0);
+        }
+
+        public String pattern(int patternIndex) {
+            final RunAutomaton automaton = individualAutomatons.get(this.matchingPatterns[patternIndex]);
+            return automaton.toString();
+        }
+
+        public int[] matches() {
+            return this.matchingPatterns;
         }
 
         public boolean found() {
-            return this.matchingPattern >= 0;
+            return this.matchingPatterns != null;
         }
 
 
@@ -114,58 +199,23 @@ public class MultiPatternSearcher {
          * If no match is found the function return false.
          */
         public boolean next() {
-            this.start = -1;
-            this.matchingPattern = -1;
+            this.matchingPatterns = null;
+            this.matchingPatternsStart = null;
+            this.matchingPatternsEnd = null;
             final int seqLength = this.seq.length();
-            { // first find a match and "choose the pattern".
-                int state = 0;
-                for (int pos=this.end; pos < seqLength; pos++) {
-                    final char c = this.seq.charAt(pos);
-                    state = automaton.step(state, c);
-                    if (automaton.atLeastOneAccept[state]) {
-                        // We found a match!
-                        this.matchingPattern = automaton.accept[state][0];
-                        this.end = pos;
-                        break;
-                    }
-                }
-                if (this.matchingPattern == -1) {
-                    return false;
-                }
-            }
-            {   // we rewind using the backward automaton to find the start of the pattern.
-                final RunAutomaton backwardAutomaton = inverseAutomatons.get(this.matchingPattern);
-                int state = backwardAutomaton.getInitialState();
-                for (int pos = this.end; pos >= 0; pos--) {
-                    final char c = this.seq.charAt(pos);
-                    state = backwardAutomaton.step(state, c);
-                    if (state == -1) {
-                        break;
-                    }
-                    if (backwardAutomaton.isAccept(state)) {
-                        start = pos;
-                    }
+            // first find a match and "choose the pattern".
+            for (int state = 0, pos = this.currentPosition; pos < seqLength; pos++) {
+                final char c = this.seq.charAt(pos);
+                state = automaton.step(state, c);
+                if (automaton.atLeastOneAccept[state]) {
+                    // We found a match!
+                    this.matchingPatterns = automaton.accept[state];
+                    this.currentPosition = pos + 1;
+                    break;
                 }
             }
 
-            {   // we go forward again using the forward automaton to find the end of the pattern.
-                final RunAutomaton forwardAutomaton = individualAutomatons.get(this.matchingPattern);
-                int state = forwardAutomaton.getInitialState();
-                for (int pos = this.start; pos < seqLength; pos++) {
-                    final char c = this.seq.charAt(pos);
-                    state = forwardAutomaton.step(state, c);
-                    if (state == -1) {
-                        break;
-                    }
-                    if (forwardAutomaton.isAccept(state)) {
-                        this.end = pos + 1;
-                    }
-                }
-            }
-
-            return true;
+            return this.matchingPatterns != null;
         }
-
-
     }
 }

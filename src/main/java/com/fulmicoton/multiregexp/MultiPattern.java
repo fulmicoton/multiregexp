@@ -23,15 +23,22 @@ public class MultiPattern {
         return new MultiPattern(Arrays.asList(patterns));
     }
 
-    public MultiPatternAutomaton makeAutomatonWithPrefix(String prefix) {
-        final List<Automaton> automata = new ArrayList<>();
-        for (final String ptn: this.patterns) {
-            final String prefixedPattern = prefix + ptn;
+    public MultiPatternAutomaton makeAutomatonWithPrefix(String prefix, String... exceptions) {
+        final List<Automaton> automata = new ArrayList<>(this.patterns.size());
+        for (final String ptn : this.patterns) {
+            boolean addPrefix = true;
+            for (String exception : exceptions) {
+                if (ptn.startsWith(exception)) {
+                    addPrefix = false;
+                    break;
+                }
+            }
+            final String prefixedPattern = (addPrefix ? prefix: "") + ptn;
             final Automaton automaton = new RegExp(prefixedPattern).toAutomaton();
             automaton.minimize();
             automata.add(automaton);
         }
-        return MultiPatternAutomaton.make(automata);
+        return MultiPatternAutomaton.multithreadedMake(automata);
     }
 
     /**
@@ -44,15 +51,20 @@ public class MultiPattern {
      * @return A searcher object
      */
     public MultiPatternSearcher searcher() {
-        final MultiPatternAutomaton searcherAutomaton = makeAutomatonWithPrefix(".*");
-        final List<Automaton> indidivualAutomatons = new ArrayList<>();
-        for (final String pattern: this.patterns) {
+        return searcher(true);
+    }
+
+
+    public MultiPatternSearcher searcher(final boolean tableize) {
+        final MultiPatternAutomaton searcherAutomaton = makeAutomatonWithPrefix(".*", ".*", "^");
+        final List<Automaton> individualAutomatons = new ArrayList<>(this.patterns.size());
+        for (final String pattern : this.patterns) {
             final Automaton automaton = new RegExp(pattern).toAutomaton();
             automaton.minimize();
             automaton.determinize();
-            indidivualAutomatons.add(automaton);
+            individualAutomatons.add(automaton);
         }
-        return new MultiPatternSearcher(searcherAutomaton, indidivualAutomatons);
+        return new MultiPatternSearcher(searcherAutomaton, individualAutomatons, tableize);
     }
 
 

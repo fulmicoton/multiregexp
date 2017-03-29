@@ -70,7 +70,7 @@ Add the following lines in the dependencies section of your `pom.xml` file.
     <dependency>
         <groupId>com.fulmicoton</groupId>
         <artifactId>multiregexp</artifactId>
-        <version>0.3</version>
+        <version>0.5.1</version>
     </dependency>
 ```    
 
